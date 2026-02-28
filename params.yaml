@@ -1,0 +1,9 @@
+model:
+  model_type: XGBoost
+  n_estimators: 100
+  max_depth: 8
+
+experiment:
+  experiment_name: Walmart_TimeSeries
+  author: Andrii
+  dataset_version: v1

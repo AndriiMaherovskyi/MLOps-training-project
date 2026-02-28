@@ -1,0 +1,25 @@
+stages:
+  prepare:
+    cmd: python src/prepare.py data/raw data/prepared
+    deps:
+      - data/raw
+      - src/prepare.py
+      - src/data_loader.py
+    outs:
+      - data/prepared
+
+  train:
+    cmd: python src/train.py
+    deps:
+      - data/prepared
+      - src/train.py
+      - src/preprocessing.py
+    params:
+      - model.model_type
+      - model.n_estimators
+      - model.max_depth
+      - experiment.experiment_name
+      - experiment.author
+      - experiment.dataset_version
+    outs:
+      - models
