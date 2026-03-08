@@ -45,10 +45,10 @@ stages:
         experiment.experiment_name: Walmart_TimeSeries
         model.max_depth: 8
         model.model_type: XGBoost
-        model.n_estimators: 100
+        model.n_estimators: 120
     outs:
     - path: models
       hash: md5
-      md5: 27891b38b2d3ac05178d538c01672428.dir
-      size: 1388273
+      md5: ca29529983a68e0986bd52476e22deb6.dir
+      size: 1681749
       nfiles: 5

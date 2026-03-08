@@ -10,3 +10,6 @@ mlruns/
 .trash/
 /models
 *.png
+/outputs
+
+terminal_commands.txt
