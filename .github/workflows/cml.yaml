@@ -41,13 +41,16 @@ jobs:
         run: |
           echo "Skipping dvc repro due to missing local data"
 
-      - name: Skip Train model
+      - name: Train model on CI sample
+        env:
+          CI: "true"
         run: |
-          echo "Skipping training stage due to missing DVC data"
+          python src/train.py
 
       - name: Run tests
         env:
           R2_THRESHOLD: "0.5"
+          CI: "true"
         run: |
           pytest -q
 

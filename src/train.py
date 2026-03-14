@@ -37,9 +37,15 @@ def train():
     author = params["experiment"]["author"]
     dataset_version = params["experiment"]["dataset_version"]
 
+    # Check CI mode
+    CI_MODE = os.getenv("CI", "false").lower() == "true"
+
     # Load prepared data
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    data_path = os.path.join(BASE_DIR, "../data/prepared/train_full.csv")
+    if CI_MODE:
+        data_path = os.path.join(BASE_DIR, "../data/prepared_sample/train_sample.csv")
+    else:
+        data_path = os.path.join(BASE_DIR, "../data/prepared/train_full.csv")
 
     train_df = pd.read_csv(data_path)
     train_df["Date"] = pd.to_datetime(train_df["Date"])
