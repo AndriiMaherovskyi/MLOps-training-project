@@ -37,16 +37,15 @@ jobs:
         run: |
           flake8 . --max-line-length=79
 
-      - name: Skip DVC reproduce
+      - name: Train model (CI sample)
+        env:
+          CI: "true"
         run: |
-          echo "Skipping dvc repro due to missing local data"
-
-      - name: Skip Train model
-        run: |
-          echo "Skipping training stage due to missing DVC data"
+          python src/train.py
 
       - name: Run tests
         env:
+          CI: "true"
           R2_THRESHOLD: "0.5"
         run: |
           pytest -q

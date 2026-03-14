@@ -25,7 +25,6 @@ def load_params():
 
 # Training function
 def train():
-
     # Load parameters
     params = load_params()
 
@@ -37,13 +36,12 @@ def train():
     author = params["experiment"]["author"]
     dataset_version = params["experiment"]["dataset_version"]
 
-    # Check CI mode
-    CI_MODE = os.getenv("CI", "false").lower() == "true"
-
-    # Load prepared data
+    # Base path
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    if CI_MODE:
-        data_path = os.path.join(BASE_DIR, "../data/prepared_sample/train_sample.csv")
+
+    # Use small sample for CI
+    if os.getenv("CI", "false").lower() == "true":
+        data_path = os.path.join(BASE_DIR, "../data/prepared/train_sample.csv")
     else:
         data_path = os.path.join(BASE_DIR, "../data/prepared/train_full.csv")
 
@@ -94,7 +92,6 @@ def train():
     mlflow.set_experiment(experiment_name)
 
     with mlflow.start_run():
-
         # Log tags
         mlflow.set_tag("author", author)
         mlflow.set_tag("dataset_version", dataset_version)
@@ -126,7 +123,6 @@ def train():
         }
 
         metrics_path = os.path.join(BASE_DIR, "../metrics.json")
-
         with open(metrics_path, "w") as f:
             json.dump(metrics, f, indent=2)
 
