@@ -75,6 +75,7 @@ def train():
 
     # MLflow setup — локальний CI-friendly каталог для артефактів
     mlflow.set_tracking_uri(str(BASE_DIR / "mlruns"))
+    mlflow.set_tracking_uri((BASE_DIR / "mlruns").as_uri())
     mlflow.set_experiment(experiment_name)
 
     with mlflow.start_run():
