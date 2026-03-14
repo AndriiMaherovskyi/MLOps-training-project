@@ -21,28 +21,20 @@ jobs:
           python-version: "3.11.5"
           cache: "pip"
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20"
-
-      - name: Install Python dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
-          pip install "pytest>=7.4,<8.0" "black>=23.0,<24.0" flake8 dvc
+          pip install "pytest>=7.4" "black>=23.0" flake8 autoflake dvc
 
-      - name: Install CML
+      - name: Format code
         run: |
-          npm install -g cml
+          black .
+          autoflake --in-place --remove-unused-variables --remove-all-unused-imports -r src tests
 
       - name: Lint
         run: |
           flake8 .
-
-      - name: Format check
-        run: |
-          black . --check
 
       - name: DVC reproduce pipeline
         run: |
@@ -58,18 +50,8 @@ jobs:
         run: |
           pytest -q
 
-      - name: Create CML report
+      - name: Create metrics report
         if: github.event_name == 'pull_request'
-        env:
-          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "## Model Metrics" > report.md
           cat metrics.json >> report.md
-
-          echo "## Visualization" >> report.md
-          cml publish confusion_matrix.png --md >> report.md
-
-          echo "## Quality Gate" >> report.md
-          echo "R2 threshold: $R2_THRESHOLD" >> report.md
-
-          cml comment create report.md
