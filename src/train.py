@@ -3,11 +3,12 @@ import mlflow.sklearn
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import os
+from pathlib import Path
 import datetime
 import yaml
 import json
 import joblib
+import os
 
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
@@ -37,13 +38,13 @@ def train():
     dataset_version = params["experiment"]["dataset_version"]
 
     # Base path
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    BASE_DIR = Path(__file__).resolve().parent
 
     # Use small sample for CI
     if os.getenv("CI", "false").lower() == "true":
-        data_path = os.path.join(BASE_DIR, "../data/prepared_sample/train_sample.csv")
+        data_path = BASE_DIR / "../data/prepared_sample/train_sample.csv"
     else:
-        data_path = os.path.join(BASE_DIR, "../data/prepared/train_full.csv")
+        data_path = BASE_DIR / "../data/prepared/train_full.csv"
 
     train_df = pd.read_csv(data_path)
     train_df["Date"] = pd.to_datetime(train_df["Date"])
@@ -61,14 +62,12 @@ def train():
             max_depth=max_depth,
             random_state=42
         )
-
     elif model_type == "LightGBM":
         model = LGBMRegressor(
             n_estimators=n_estimators,
             max_depth=max_depth,
             random_state=42
         )
-
     elif model_type == "XGBoost":
         model = XGBRegressor(
             n_estimators=n_estimators,
@@ -77,7 +76,6 @@ def train():
             use_label_encoder=False,
             eval_metric="rmse"
         )
-
     else:
         raise ValueError(f"Unsupported model type: {model_type}")
 
@@ -122,8 +120,8 @@ def train():
             "val_r2": float(val_r2)
         }
 
-        metrics_path = os.path.join(BASE_DIR, "../metrics.json")
-        with open(metrics_path, "w") as f:
+        metrics_path = BASE_DIR / "../metrics.json"
+        with metrics_path.open("w") as f:
             json.dump(metrics, f, indent=2)
 
         mlflow.log_metric("train_rmse", train_rmse)
@@ -137,11 +135,11 @@ def train():
 
         # Save model locally
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        model_dir = os.path.join(BASE_DIR, f"../models/{model_name}_{timestamp}")
-        os.makedirs(model_dir, exist_ok=True)
-        mlflow.sklearn.save_model(pipeline_model, path=model_dir)
+        model_dir = BASE_DIR / f"../models/{model_name}_{timestamp}"
+        model_dir.mkdir(parents=True, exist_ok=True)
+        mlflow.sklearn.save_model(pipeline_model, path=str(model_dir))
 
-        model_path = os.path.join(BASE_DIR, "../model.pkl")
+        model_path = BASE_DIR / "../model.pkl"
         joblib.dump(pipeline_model, model_path)
 
         # Plot predictions
@@ -153,7 +151,7 @@ def train():
         plt.plot([y_val.min(), y_val.max()],
                  [y_val.min(), y_val.max()], 'r--')
         plt.tight_layout()
-        plot_path = os.path.join(BASE_DIR, "../confusion_matrix.png")
+        plot_path = BASE_DIR / "../confusion_matrix.png"
         plt.savefig(plot_path)
         mlflow.log_artifact(plot_path)
         plt.close()
@@ -164,8 +162,7 @@ def train():
 
         cat_cols = []
         if "cat" in preproc.named_transformers_:
-            cat_cols = preproc.named_transformers_["cat"] \
-                .get_feature_names_out().tolist()
+            cat_cols = preproc.named_transformers_["cat"].get_feature_names_out().tolist()
 
         num_cols = [c for c in X_train.columns if c not in ["Type"]]
         all_cols = cat_cols + num_cols
@@ -188,8 +185,9 @@ def train():
         plt.title("Top 20 Feature Importances")
         plt.xlabel("Importance")
         plt.tight_layout()
-        plt.savefig("feature_importance.png")
-        mlflow.log_artifact("feature_importance.png")
+        feature_path = BASE_DIR / "feature_importance.png"
+        plt.savefig(feature_path)
+        mlflow.log_artifact(feature_path)
         plt.close()
 
     print(
@@ -197,7 +195,6 @@ def train():
         f"Val RMSE: {val_rmse:.2f}, "
         f"Val R2: {val_r2:.4f}"
     )
-
 
 if __name__ == "__main__":
     train()

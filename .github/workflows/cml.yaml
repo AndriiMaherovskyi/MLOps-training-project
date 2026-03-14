@@ -41,6 +41,7 @@ jobs:
         env:
           CI: "true"
         run: |
+          echo "Training on CI sample dataset"
           python src/train.py
 
       - name: Run tests
