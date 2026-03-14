@@ -36,8 +36,8 @@ stages:
       size: 1876
     - path: src/train.py
       hash: md5
-      md5: bae3bae786251d3c4b12a607670d8be8
-      size: 5856
+      md5: f18df02bf82201e7f1aed6d9c79a8cd7
+      size: 6403
     params:
       params.yaml:
         experiment.author: Andrii
@@ -49,6 +49,6 @@ stages:
     outs:
     - path: models
       hash: md5
-      md5: ca29529983a68e0986bd52476e22deb6.dir
-      size: 1681749
+      md5: 5a4f623c08318a104d100806997f2c7d.dir
+      size: 1681757
       nfiles: 5

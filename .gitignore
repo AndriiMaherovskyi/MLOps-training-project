@@ -11,5 +11,7 @@ mlruns/
 /models
 *.png
 /outputs
+metrics.json
+model.pkl
 
 terminal_commands.txt

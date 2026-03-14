@@ -6,6 +6,8 @@ import pandas as pd
 import os
 import datetime
 import yaml
+import json
+import joblib
 
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
@@ -110,6 +112,18 @@ def train():
         val_mae = mean_absolute_error(y_val, y_val_pred)
         val_r2 = r2_score(y_val, y_val_pred)
 
+        metrics = {
+            "train_rmse": float(train_rmse),
+            "val_rmse": float(val_rmse),
+            "val_mae": float(val_mae),
+            "val_r2": float(val_r2)
+        }
+
+        metrics_path = os.path.join(BASE_DIR, "../metrics.json")
+
+        with open(metrics_path, "w") as f:
+            json.dump(metrics, f, indent=2)
+
         mlflow.log_metric("train_rmse", train_rmse)
         mlflow.log_metric("val_rmse", val_rmse)
         mlflow.log_metric("val_mae", val_mae)
@@ -125,6 +139,9 @@ def train():
         os.makedirs(model_dir, exist_ok=True)
         mlflow.sklearn.save_model(pipeline_model, path=model_dir)
 
+        model_path = os.path.join(BASE_DIR, "../model.pkl")
+        joblib.dump(pipeline_model, model_path)
+
         # Plot predictions
         plt.figure(figsize=(12, 6))
         plt.scatter(y_val, y_val_pred, alpha=0.3)
@@ -134,8 +151,9 @@ def train():
         plt.plot([y_val.min(), y_val.max()],
                  [y_val.min(), y_val.max()], 'r--')
         plt.tight_layout()
-        plt.savefig("y_true_vs_pred.png")
-        mlflow.log_artifact("y_true_vs_pred.png")
+        plot_path = os.path.join(BASE_DIR, "../confusion_matrix.png")
+        plt.savefig(plot_path)
+        mlflow.log_artifact(plot_path)
         plt.close()
 
         # Feature importance
