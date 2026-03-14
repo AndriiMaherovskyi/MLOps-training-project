@@ -28,11 +28,9 @@ def load_params():
 def train():
     # Load parameters
     params = load_params()
-
     model_type = params["model"]["model_type"]
     n_estimators = params["model"]["n_estimators"]
     max_depth = params["model"]["max_depth"]
-
     experiment_name = params["experiment"]["experiment_name"]
     author = params["experiment"]["author"]
     dataset_version = params["experiment"]["dataset_version"]
@@ -75,7 +73,8 @@ def train():
         ("model", model)
     ])
 
-    # MLflow setup
+    # MLflow setup — локальний CI-friendly каталог для артефактів
+    mlflow.set_tracking_uri(str(BASE_DIR / "mlruns"))
     mlflow.set_experiment(experiment_name)
 
     with mlflow.start_run():
@@ -117,11 +116,11 @@ def train():
         mlflow.log_metric("val_mae", val_mae)
         mlflow.log_metric("val_r2", val_r2)
 
-        # Log model safely in CI
+        # Log model
         model_name = f"{model_type.lower()}_timeseries_pipeline"
         mlflow.sklearn.log_model(
             sk_model=pipeline_model,
-            artifact_path=model_name  # CI-friendly
+            artifact_path=model_name
         )
 
         # Save model locally
