@@ -85,7 +85,10 @@ def main(cfg: DictConfig):
             archive_existing_versions=False
         )
 
-        print(f"Final model '{model_name}' version {registered_model.version} registered in Staging")
+        print(
+            f"Final model '{model_name}' version "
+            f"{registered_model.version} registered in Staging"
+        )
         print(f"MLflow run_id: {run.info.run_id}")
 
 if __name__ == "__main__":
