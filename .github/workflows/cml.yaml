@@ -21,20 +21,12 @@ jobs:
           python-version: "3.11.5"
           cache: "pip"
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20"
-
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
           pip install "pytest<8.0,>=7.4" "black<24.0,>=23.0" flake8 dvc
-
-      - name: Install CML
-        run: |
-          npm install -g @iterative/cml
+          pip install "git+https://github.com/iterative/cml.git@v0.30.0"
 
       - name: Lint
         run: |
