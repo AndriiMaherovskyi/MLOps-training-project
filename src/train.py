@@ -41,7 +41,7 @@ def train():
 
     # Use small sample for CI
     if os.getenv("CI", "false").lower() == "true":
-        data_path = os.path.join(BASE_DIR, "../data/prepared/train_sample.csv")
+        data_path = os.path.join(BASE_DIR, "../data/prepared_sample/train_sample.csv")
     else:
         data_path = os.path.join(BASE_DIR, "../data/prepared/train_full.csv")
 
