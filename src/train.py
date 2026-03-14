@@ -37,14 +37,14 @@ def train():
     author = params["experiment"]["author"]
     dataset_version = params["experiment"]["dataset_version"]
 
-    # Base path
-    BASE_DIR = Path(__file__).resolve().parent
+    # Base path — CI-friendly
+    BASE_DIR = Path(os.getcwd())
 
     # Use small sample for CI
     if os.getenv("CI", "false").lower() == "true":
-        data_path = BASE_DIR / "../data/prepared_sample/train_sample.csv"
+        data_path = BASE_DIR / "data/prepared_sample/train_sample.csv"
     else:
-        data_path = BASE_DIR / "../data/prepared/train_full.csv"
+        data_path = BASE_DIR / "data/prepared/train_full.csv"
 
     train_df = pd.read_csv(data_path)
     train_df["Date"] = pd.to_datetime(train_df["Date"])
@@ -57,24 +57,13 @@ def train():
 
     # Model selection
     if model_type == "RandomForest":
-        model = RandomForestRegressor(
-            n_estimators=n_estimators,
-            max_depth=max_depth,
-            random_state=42
-        )
+        model = RandomForestRegressor(n_estimators=n_estimators, max_depth=max_depth, random_state=42)
     elif model_type == "LightGBM":
-        model = LGBMRegressor(
-            n_estimators=n_estimators,
-            max_depth=max_depth,
-            random_state=42
-        )
+        model = LGBMRegressor(n_estimators=n_estimators, max_depth=max_depth, random_state=42)
     elif model_type == "XGBoost":
         model = XGBRegressor(
-            n_estimators=n_estimators,
-            max_depth=max_depth,
-            random_state=42,
-            use_label_encoder=False,
-            eval_metric="rmse"
+            n_estimators=n_estimators, max_depth=max_depth, random_state=42,
+            use_label_encoder=False, eval_metric="rmse"
         )
     else:
         raise ValueError(f"Unsupported model type: {model_type}")
@@ -90,12 +79,11 @@ def train():
     mlflow.set_experiment(experiment_name)
 
     with mlflow.start_run():
-        # Log tags
+        # Log tags and hyperparameters
         mlflow.set_tag("author", author)
         mlflow.set_tag("dataset_version", dataset_version)
         mlflow.set_tag("model_type", model_type)
 
-        # Log hyperparameters
         mlflow.log_param("model_type", model_type)
         mlflow.log_param("n_estimators", n_estimators)
         mlflow.log_param("max_depth", max_depth)
@@ -120,7 +108,7 @@ def train():
             "val_r2": float(val_r2)
         }
 
-        metrics_path = BASE_DIR / "../metrics.json"
+        metrics_path = BASE_DIR / "metrics.json"
         with metrics_path.open("w") as f:
             json.dump(metrics, f, indent=2)
 
@@ -129,17 +117,20 @@ def train():
         mlflow.log_metric("val_mae", val_mae)
         mlflow.log_metric("val_r2", val_r2)
 
-        # Log model
+        # Log model safely in CI
         model_name = f"{model_type.lower()}_timeseries_pipeline"
-        mlflow.sklearn.log_model(pipeline_model, name=model_name)
+        mlflow.sklearn.log_model(
+            sk_model=pipeline_model,
+            artifact_path=model_name  # CI-friendly
+        )
 
         # Save model locally
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        model_dir = BASE_DIR / f"../models/{model_name}_{timestamp}"
+        model_dir = BASE_DIR / "models" / f"{model_name}_{timestamp}"
         model_dir.mkdir(parents=True, exist_ok=True)
         mlflow.sklearn.save_model(pipeline_model, path=str(model_dir))
 
-        model_path = BASE_DIR / "../model.pkl"
+        model_path = BASE_DIR / "model.pkl"
         joblib.dump(pipeline_model, model_path)
 
         # Plot predictions
@@ -148,10 +139,9 @@ def train():
         plt.xlabel("y_true")
         plt.ylabel("y_pred")
         plt.title("True vs Predicted Weekly Sales")
-        plt.plot([y_val.min(), y_val.max()],
-                 [y_val.min(), y_val.max()], 'r--')
+        plt.plot([y_val.min(), y_val.max()], [y_val.min(), y_val.max()], 'r--')
         plt.tight_layout()
-        plot_path = BASE_DIR / "../confusion_matrix.png"
+        plot_path = BASE_DIR / "confusion_matrix.png"
         plt.savefig(plot_path)
         mlflow.log_artifact(plot_path)
         plt.close()
@@ -173,15 +163,10 @@ def train():
             importances = np.zeros(len(all_cols))
 
         feat_imp = dict(zip(all_cols, importances))
-        sorted_feat = dict(sorted(feat_imp.items(),
-                                  key=lambda x: x[1],
-                                  reverse=True))
+        sorted_feat = dict(sorted(feat_imp.items(), key=lambda x: x[1], reverse=True))
 
         plt.figure(figsize=(12, 8))
-        plt.barh(
-            list(sorted_feat.keys())[:20][::-1],
-            list(sorted_feat.values())[:20][::-1]
-        )
+        plt.barh(list(sorted_feat.keys())[:20][::-1], list(sorted_feat.values())[:20][::-1])
         plt.title("Top 20 Feature Importances")
         plt.xlabel("Importance")
         plt.tight_layout()
@@ -190,11 +175,7 @@ def train():
         mlflow.log_artifact(feature_path)
         plt.close()
 
-    print(
-        f"Train RMSE: {train_rmse:.2f}, "
-        f"Val RMSE: {val_rmse:.2f}, "
-        f"Val R2: {val_r2:.4f}"
-    )
+    print(f"Train RMSE: {train_rmse:.2f}, Val RMSE: {val_rmse:.2f}, Val R2: {val_r2:.4f}")
 
 if __name__ == "__main__":
     train()
