@@ -140,7 +140,7 @@ def train():
         plt.title("True vs Predicted Weekly Sales")
         plt.plot([y_val.min(), y_val.max()], [y_val.min(), y_val.max()], 'r--')
         plt.tight_layout()
-        plot_path = BASE_DIR / "confusion_matrix.png"
+        plot_path = BASE_DIR / "true_vs_predicted_plot.png"
         plt.savefig(plot_path)
         mlflow.log_artifact(plot_path)
         plt.close()

@@ -64,7 +64,8 @@ jobs:
 
           echo "" >> report.md
           echo "## Visualization" >> report.md
-          echo "Confusion matrix visualization goes here" >> report.md
+          echo "True vs Predicted plot:" >> report.md
+          echo "![](true_vs_predicted_plot.png)" >> report.md
 
           echo "" >> report.md
           echo "## Quality Gate" >> report.md
