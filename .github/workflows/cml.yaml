@@ -55,12 +55,19 @@ jobs:
         if: github.event_name == 'pull_request'
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          R2_THRESHOLD: "0.5"
         run: |
+          pip install cml
+
           echo "## Model Metrics" > report.md
           cat metrics.json >> report.md
 
+          echo "" >> report.md
           echo "## Visualization" >> report.md
           echo "Confusion matrix visualization goes here" >> report.md
 
+          echo "" >> report.md
           echo "## Quality Gate" >> report.md
           echo "R2 threshold: $R2_THRESHOLD" >> report.md
+
+          cml comment create report.md
