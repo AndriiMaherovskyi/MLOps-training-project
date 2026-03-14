@@ -175,7 +175,11 @@ def train():
         mlflow.log_artifact(feature_path)
         plt.close()
 
-    print(f"Train RMSE: {train_rmse:.2f}, Val RMSE: {val_rmse:.2f}, Val R2: {val_r2:.4f}")
+    print(
+        f"Train RMSE: {train_rmse:.2f}, "
+        f"Val RMSE: {val_rmse:.2f}, "
+        f"Val R2: {val_r2:.4f}"
+    )
 
 if __name__ == "__main__":
     train()
