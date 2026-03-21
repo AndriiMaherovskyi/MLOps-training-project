@@ -47,26 +47,26 @@ stages:
         experiment.experiment_name: Walmart_TimeSeries
         model.max_depth: 8
         model.model_type: XGBoost
-        model.n_estimators: 121
+        model.n_estimators: 100
     outs:
     - path: latest_run.json
       hash: md5
-      md5: 35494e08b2a2e7e0593e765a3d4654cb
+      md5: b9f1546d74ff6e760608e956d9a233d4
       size: 97
     - path: metrics.json
       hash: md5
-      md5: 85981f50a67851c6a2e283047123f7c0
-      size: 134
+      md5: 9579c1634cc9919fe860228aa77529cb
+      size: 135
     - path: model.pkl
       hash: md5
-      md5: b7537404b001c050bd4535fc87294bec
-      size: 1695366
+      md5: 540162124624c14ea5c466a1da6b181a
+      size: 1388413
     - path: models
       hash: md5
-      md5: 5aa1bf87f5afe2deed76c2cb6051f9a0.dir
-      size: 1695145
+      md5: 5a457aee5f9363ca643a18488238651d.dir
+      size: 1388192
       nfiles: 5
     - path: true_vs_predicted_plot.png
       hash: md5
-      md5: 38b5af2fb31b4bbb8359f8f534baa01c
-      size: 156394
+      md5: e4bdf687c2cecfc17db2701ef51fe587
+      size: 156577

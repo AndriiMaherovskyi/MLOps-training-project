@@ -37,7 +37,7 @@ def _choose_next_step(threshold: float = 0.5) -> str:
 
 @dag(
     dag_id="ml_training_pipeline",
-    start_date=datetime(2024, 1, 1),
+    start_date=datetime(2026, 1, 1),
     schedule=None,
     catchup=False,
     tags=["mlops", "dvc", "mlflow"],
