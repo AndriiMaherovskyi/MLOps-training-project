@@ -13,5 +13,6 @@ mlruns/
 /outputs
 metrics.json
 model.pkl
+latest_run.json
 
 terminal_commands.txt

@@ -34,10 +34,12 @@ stages:
       hash: md5
       md5: 6ad679962a8ae5b62bd278ad296f37d3
       size: 1876
+      isexec: true
     - path: src/train.py
       hash: md5
-      md5: d71512f88707a1dca07596bc9b7fcb78
-      size: 6418
+      md5: 03bdf9ee7318f3caea922e7f06498aa6
+      size: 7587
+      isexec: true
     params:
       params.yaml:
         experiment.author: Andrii
@@ -45,10 +47,26 @@ stages:
         experiment.experiment_name: Walmart_TimeSeries
         model.max_depth: 8
         model.model_type: XGBoost
-        model.n_estimators: 120
+        model.n_estimators: 121
     outs:
+    - path: latest_run.json
+      hash: md5
+      md5: 35494e08b2a2e7e0593e765a3d4654cb
+      size: 97
+    - path: metrics.json
+      hash: md5
+      md5: 85981f50a67851c6a2e283047123f7c0
+      size: 134
+    - path: model.pkl
+      hash: md5
+      md5: b7537404b001c050bd4535fc87294bec
+      size: 1695366
     - path: models
       hash: md5
-      md5: 920a8323064d0ae50b3630574e1534e1.dir
-      size: 1681757
+      md5: 5aa1bf87f5afe2deed76c2cb6051f9a0.dir
+      size: 1695145
       nfiles: 5
+    - path: true_vs_predicted_plot.png
+      hash: md5
+      md5: 38b5af2fb31b4bbb8359f8f534baa01c
+      size: 156394

@@ -23,3 +23,9 @@ stages:
       - experiment.dataset_version
     outs:
       - models
+      - model.pkl
+      - latest_run.json
+    metrics:
+      - metrics.json
+    plots:
+      - true_vs_predicted_plot.png

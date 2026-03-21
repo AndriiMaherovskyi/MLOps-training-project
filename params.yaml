@@ -1,6 +1,6 @@
 model:
   model_type: XGBoost
-  n_estimators: 120
+  n_estimators: 121
   max_depth: 8
 
 experiment:
