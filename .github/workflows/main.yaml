@@ -16,11 +16,10 @@ jobs:
           python-version: "3.11"
           cache: "pip"
 
-      - name: Install project dependencies
+      - name: Install CI dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel
-          pip install -r requirements.txt
-          pip install flake8
+          pip install flake8 pytest
 
       - name: Install Airflow for DAG integrity tests
         run: |
@@ -33,7 +32,7 @@ jobs:
 
       - name: DAG integrity test
         run: |
-          pytest -q tests/test_dag_integrity.py
+          python -m pytest -q tests/test_dag_integrity.py
 
       - name: Docker build
         run: |
